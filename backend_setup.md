@@ -184,13 +184,53 @@ urlpatterns = [
     path('product/insert/', insert_product, name='insert_product'),
 ]
 ```
+### 🛠️ Step 12: Create Update and Delete Functionality
 
+Let’s now add functionality to update and delete a product using its primary key (`pk`).
 
+Open your `api/views.py` file and add the following function:
 
+```python
+@api_view(['PUT', 'DELETE'])
+def product_detail(request, pk):
+    try:
+        product = Inventory.objects.get(pk=pk)
+    except Inventory.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
+    if request.method == 'DELETE':
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
+    elif request.method == 'PUT':
+        data = request.data
+        serializer = InventorySerializer(product, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+```
 
+### 🌐 Step 13: Register the Route in api/urls.py
 
+Update your `api/urls.py` to include the new route:
+
+```python
+from .views import get_product, insert_product, product_detail
+
+urlpatterns = [
+    path('product/', get_product, name='get_product'),
+    path('product/insert/', insert_product, name='insert_product'),
+    path('product/<int:pk>/', product_detail, name='product_detail'),
+]
+```
+
+# ✅ You can now:
+
+- GET all products: http://localhost:8000/api/product/
+- POST new product: http://localhost:8000/api/product/insert/
+- PUT update product: http://localhost:8000/api/product/<id>/
+- DELETE product: http://localhost:8000/api/product/<id>/
 
 
 
