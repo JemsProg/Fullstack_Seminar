@@ -194,21 +194,21 @@ Open your `api/views.py` file and add the following function:
 @api_view(['PUT', 'DELETE'])
 def product_detail(request, pk):
     try:
-        product = Inventory.objects.get(pk=pk)
-    except Inventory.DoesNotExist:
+        product = inventory.objects.get(pk=pk)
+    except inventory.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'DELETE':
+    
+    if request.method == 'DELETE': 
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
     elif request.method == 'PUT':
-        data = request.data
-        serializer = InventorySerializer(product, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            data = request.data
+            serializer = InventorySerializer(product, data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 ```
 
 ### Step 13: Register the Route in api/urls.py
